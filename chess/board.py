@@ -6,7 +6,9 @@ class Board():
         self.board = [[Spot(row, col) for col in range(8)] for row in range(8)]
 
     def move(self, move):
-        pass
+        row, col = move.move_end[0], move.move_end[1]
+        self.board[row][col].set_piece(
+                self.board[move.move_start[0]][move.move_start[1]].pop_piece())
 
     def isPiece(self, row, col, turn):
         return self.board[row][col] is not None

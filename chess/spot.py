@@ -14,6 +14,14 @@ class Spot():
         except AttributeError:
             return []
 
+    def pop_piece(self):
+        piece = self.piece
+        self.piece = None
+        return piece
+
+    def set_piece(self, piece):
+        self.piece = piece
+
     def __init_piece(self, row, col, white):
         self.piece = None
         if row in (1, 6):
