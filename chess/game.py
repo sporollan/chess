@@ -18,6 +18,7 @@ class Game():
                 move = Move(self.players[self.turn], self.move_start, spot)
                 self.board.move(move)
                 self.moves.append(move)
+                self.turn = 0 if self.turn else 1
             self.__prep_move()
         else:
             if self.board.isPiece(spot[0], spot[1], self.turn):
