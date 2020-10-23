@@ -11,7 +11,10 @@ class Board():
                 self.board[move.move_start[0]][move.move_start[1]].pop_piece())
 
     def isPiece(self, row, col, turn):
-        return self.board[row][col] is not None and turn == self.board[row][col].piece.white
+        try:
+            return turn == self.board[row][col].piece.white
+        except AttributeError:
+            return False
 
     def get_move_array(self, row, col, white):
         allied_pieces = self.__get_allied_pieces(white)
