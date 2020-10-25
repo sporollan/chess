@@ -10,6 +10,7 @@ class Game():
         self.board = Board()
         self.status = 'UNFINISHED'
         self.moves = []
+        self.check = False
         self.__prep_move()
 
     def play(self, spot):
@@ -18,6 +19,7 @@ class Game():
                 move = Move(self.players[self.turn], self.move_start, spot)
                 self.board.move(move)
                 self.moves.append(move)
+                self.check = self.board.is_check(self.turn)
                 self.turn = 0 if self.turn else 1
             self.__prep_move()
         else:

@@ -34,6 +34,14 @@ class Board():
                 board[s[0]][s[1]] = board[s[0]][s[1]] + '*'
         return board
 
+    def is_check(self, white):
+        allied_pieces = self.__get_allied_pieces(white)
+        opposite_king = self.__get_opposite_king(white)
+        for s in allied_pieces:
+            if opposite_king in self.board[s[0]][s[1]].get_move_array(allied_pieces):
+                return True
+        return False
+
     def __get_allied_pieces(self, white):
         allied_pieces = {}
         for line in self.board:
@@ -42,3 +50,11 @@ class Board():
                     if sp.piece.white == white:
                         allied_pieces[(sp.row, sp.col)] = True
         return allied_pieces
+
+    def __get_opposite_king(self, white):
+        for line in self.board:
+            for sp in line:
+                if sp.piece:
+                    if sp.piece.white != white:
+                        if sp.piece.get_name() == 'K':
+                            return (sp.row, sp.col)
