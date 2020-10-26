@@ -53,7 +53,11 @@ class Board():
         return False
 
     def set_custom_board(self, board):
-        pass
+        self.board = {1: {}, 0: {}}
+        for row, line in enumerate(board):
+            for col, p in enumerate(line):
+                if len(p) == 2:
+                    self.board[int(p[1])][(row, col)] = self.__init_piece_by_name(p[0], p[1])
 
     def __get_allied_pieces(self, white):
         allied_pieces = {}
@@ -68,6 +72,20 @@ class Board():
         for key in self.board[white]:
             if self.board[white][key].get_name() == 'K':
                 return key
+
+    def __init_piece_by_name(self, n, white):
+        if n == 'P':
+            return p.Pawn(white)
+        elif n == 'R':
+            return p.Rook(white)
+        elif n == 'k':
+            return p.Knight(white)
+        elif n == 'B':
+            return p.Bishop(white)
+        elif n == 'Q':
+            return p.Queen(white)
+        elif n == 'K':
+            return p.King(white)
 
     def __init_piece(self, row, col, white):
         piece = None
