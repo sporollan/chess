@@ -6,11 +6,26 @@ class Board():
     def __init__(self):
         self.board = {1: {(row, col): self.__init_piece(row, col, 1) for col in range(8) for row in range(6, 8)},
                         0: {(row, col): self.__init_piece(row, col, 0) for col in range(8) for row in range(0, 2)}}
+        self.dead_white = []
+        self.dead_black = []
 
     def move(self, move):
         row, col = move.move_end[0], move.move_end[1]
         piece = self.board[move.white].pop((move.move_start[0], move.move_start[1]))
+        self.__kill_piece(move)
         self.board[move.white][(move.move_end[0], move.move_end[1])] = piece
+
+    def __kill_piece(self, move):
+        opposite = 0 if move.white else 1
+        try:
+            killed = self.board[opposite].pop((move.move_end[0], move.move_end[1]))
+        except KeyError:
+            pass
+        else:
+            if move.white:
+                self.dead_black.append(killed)
+            else:
+                self.dead_white.append(killed)
 
     def isPiece(self, row, col, turn):
         try:
