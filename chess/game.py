@@ -16,7 +16,7 @@ class Game():
     def play(self, spot):
         if self.move_start:
             if spot in self.move_array:
-                move = Move(self.players[self.turn], self.move_start, spot)
+                move = Move(self.turn, self.move_start, spot)
                 self.board.move(move)
                 self.moves.append(move)
                 self.check = self.board.is_check(self.turn)

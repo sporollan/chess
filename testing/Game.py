@@ -213,3 +213,29 @@ class Test_game(unittest.TestCase):
         self.assertEqual(board, expected5)
         board = self.g.play(spot6)
         self.assertEqual(board, expected6)
+
+    @parameterized.expand([
+        (
+            [['R', 'k', 'B', 'Q', 'K', 'B', 'k', 'R'],
+             ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+             [' ', ' ', ' ', ' ', ' ', ' ', '*', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', 'k', ' ', ' '],
+             ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+             ['R', 'k', 'B', 'Q', 'K', 'B', ' ', 'R']],
+             (),
+            [['R', 'k', 'B', 'Q', 'K', 'B', 'k', 'R'],
+             ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+             [' ', ' ', ' ', ' ', ' ', ' ', '*', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', 'k', ' ', ' '],
+             ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+             ['R', 'k', 'B', 'Q', 'K', 'B', ' ', 'R']]
+        )
+    ])
+    def test_pieces_movearray(self, board, spot, expected):
+        pass
+        # self.g.board = board
+        # self.assertEqual(self.g.play(spot), expected)
