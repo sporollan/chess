@@ -251,10 +251,56 @@ class Test_game(unittest.TestCase):
              [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
              [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
              [' ', 'K1', ' ', ' ',  ' ',  ' ', ' ', ' ',]],
-             (4, 3), (4, 4)),
+             1, (4, 3), (4, 4)
+        ),
+        (
+            [[' ', ' ',  ' ', ' ',  'K0', ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', 'R0', ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', 'K1', ' ', ' ',  ' ',  ' ', ' ', ' ',]],
+             0, (4, 3), (4, 1)
+        ),
     ])
-    def test_check(self, custom_board, move_start, move_end):
+    def test_check(self, custom_board, turn, move_start, move_end):
         self.g.board.set_custom_board(custom_board)
+        self.g.turn = turn
         self.g.play(move_start)
         self.g.play(move_end)
         self.assertTrue(self.g.check)
+        self.assertFalse(self.g.check_mate)
+
+    @parameterized.expand([
+        (
+            [[' ', ' ',  ' ', ' ', ' ',  ' ',  ' ',  'K0',],
+             [' ', ' ',  ' ', ' ', ' ',  'Q1', ' ',  ' ',],
+             [' ', ' ',  ' ', ' ', ' ',  ' ',  'R1', ' ',],
+             [' ', ' ',  ' ', ' ', ' ',  ' ',  ' ',  ' ',],
+             [' ', ' ',  ' ', ' ', ' ',  ' ',  ' ',  ' ',],
+             [' ', ' ',  ' ', ' ', ' ',  ' ',  ' ',  ' ',],
+             [' ', ' ',  ' ', ' ', ' ',  ' ',  ' ',  ' ',],
+             [' ', 'K1', ' ', ' ', ' ',  ' ',  ' ',  ' ',]],
+             1, (1, 5), (1, 6)
+        ),
+        (
+            [[' ',  ' ',  ' ',  ' ',  'K0', ' ', ' ', ' ',],
+             [' ',  ' ',  ' ',  ' ',  ' ',  ' ', ' ', ' ',],
+             [' ',  ' ',  ' ',  ' ',  ' ',  ' ', ' ', ' ',],
+             [' ',  ' ',  ' ',  ' ',  ' ',  ' ', ' ', ' ',],
+             [' ',  'R0', ' ',  ' ',  ' ',  ' ', ' ', ' ',],
+             [' ',  ' ',  ' ',  ' ',  ' ',  ' ', ' ', ' ',],
+             [' ',  ' ',  'Q0', ' ',  ' ',  ' ', ' ', ' ',],
+             ['K1', ' ',  ' ',  ' ',  ' ',  ' ', ' ', ' ',]],
+             0, (6, 2), (6, 1)
+        ),
+    ])
+    def test_check_mate(self, custom_board, turn, move_start, move_end):
+        self.g.board.set_custom_board(custom_board)
+        self.g.turn = turn
+        self.g.play(move_start)
+        self.g.play(move_end)
+        self.assertTrue(self.g.check)
+        self.assertTrue(self.g.check_mate)
