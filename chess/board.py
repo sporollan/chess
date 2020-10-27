@@ -63,7 +63,7 @@ class Board():
         allied_pieces = self.board[white]
         opposite_king = self.__get_opposite_king(white)
         for key in self.board[white]:
-            if opposite_king in self.board[white][key].get_moves(key[0], key[1], allied_pieces):   #piece.get_moves(allied_pieces):
+            if opposite_king in self.board[white][key].get_moves(key[0], key[1], allied_pieces):
                 return True
         return False
 
@@ -84,8 +84,9 @@ class Board():
         return allied_pieces
 
     def __get_opposite_king(self, white):
-        for key in self.board[white]:
-            if self.board[white][key].get_name() == 'K':
+        opposite = 0 if white else 1
+        for key in self.board[opposite]:
+            if self.board[opposite][key].get_name() == 'K':
                 return key
 
     def __init_piece_by_name(self, n, white):

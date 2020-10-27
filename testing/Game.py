@@ -213,6 +213,7 @@ class Test_game(unittest.TestCase):
         self.assertEqual(board, expected5)
         board = self.g.play(spot6)
         self.assertEqual(board, expected6)
+        self.assertFalse(self.g.check)
 
     @parameterized.expand([
         (
@@ -239,3 +240,21 @@ class Test_game(unittest.TestCase):
         pass
         # self.g.board = board
         # self.assertEqual(self.g.play(spot), expected)
+
+    @parameterized.expand([
+        (
+            [[' ', ' ',  ' ', ' ',  'K0', ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', 'R1', ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', ' ',  ' ', ' ',  ' ',  ' ', ' ', ' ',],
+             [' ', 'K1', ' ', ' ',  ' ',  ' ', ' ', ' ',]],
+             (4, 3), (4, 4)),
+    ])
+    def test_check(self, custom_board, move_start, move_end):
+        self.g.board.set_custom_board(custom_board)
+        self.g.play(move_start)
+        self.g.play(move_end)
+        self.assertTrue(self.g.check)
