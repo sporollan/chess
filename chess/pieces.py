@@ -5,6 +5,10 @@ class Piece():
         self.white = white
 
     def verify(self, newcoord, allied_pieces):
+        if newcoord[0] > 7 or newcoord[0] < 0:
+            return []
+        if newcoord[1] > 7 or newcoord[1] < 0:
+            return []
         try:
             allied_pieces[newcoord]
         except KeyError:
@@ -192,9 +196,9 @@ class King(Piece):
     def get_moves(self, row, col, allied_pieces={}):
         moves = []
         for n in range(-1, 2, 2):
-            moves.append((row, col+n))
+            moves += self.verify((row, col+n), allied_pieces)
             for c in range(-1, 2):
-                moves.append((row + n, col + c))
+                moves += self.verify((row + n, col + c), allied_pieces)
         return moves
 
     def get_name(self):
