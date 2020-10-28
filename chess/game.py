@@ -11,22 +11,26 @@ class Game():
         self.status = 'UNFINISHED'
         self.moves = []
         self.check = False
+        self.check_mate = False
         self.__prep_move()
 
     def play(self, spot):
-        if self.move_start:
-            if spot in self.move_array:
-                move = Move(self.turn, self.move_start, spot)
-                self.board.move(move)
-                self.moves.append(move)
-                self.check = self.board.is_check(self.turn)
-                self.turn = 0 if self.turn else 1
-            self.__prep_move()
-        else:
-            if self.board.isPiece(spot[0], spot[1], self.turn):
-                self.move_start = spot
-                self.move_array = self.board.get_move_array(
-                                    spot[0], spot[1], self.turn)
+        if not self.check_mate:
+            if self.move_start:
+                if spot in self.move_array:
+                    move = Move(self.turn, self.move_start, spot)
+                    self.board.move(move)
+                    self.moves.append(move)
+                    self.check = self.board.is_check(self.turn)
+                    if self.check:
+                        self.check_mate = self.board.is_check_mate(self.turn)
+                    self.turn = 0 if self.turn else 1
+                self.__prep_move()
+            else:
+                if self.board.isPiece(spot[0], spot[1], self.turn):
+                    self.move_start = spot
+                    self.move_array = self.board.get_move_array(
+                                        spot[0], spot[1], self.turn)
         return self.board.get_board(self.move_array)
 
     def __prep_move(self):

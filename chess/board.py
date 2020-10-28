@@ -1,11 +1,15 @@
 from spot import Spot
+from moves import Move
 import pieces as p
-
+import copy
 
 class Board():
-    def __init__(self):
-        self.board = {1: {(row, col): self.__init_piece(row, col, 1) for col in range(8) for row in range(6, 8)},
-                        0: {(row, col): self.__init_piece(row, col, 0) for col in range(8) for row in range(0, 2)}}
+    def __init__(self, board=None):
+        if board:
+            self.board = board
+        else:
+            self.board = {1: {(row, col): self.__init_piece(row, col, 1) for col in range(8) for row in range(6, 8)},
+                          0: {(row, col): self.__init_piece(row, col, 0) for col in range(8) for row in range(0, 2)}}
         self.dead_white = []
         self.dead_black = []
 
@@ -66,6 +70,16 @@ class Board():
             if opposite_king in self.board[white][key].get_moves(key[0], key[1], allied_pieces):
                 return True
         return False
+
+    def is_check_mate(self, white):
+        opposite = 0 if white else 1
+        for spot in self.board[opposite]:
+            for move in self.board[opposite][spot].get_moves(spot[0], spot[1], self.board[opposite]):
+                board = Board(copy.deepcopy(self.board))
+                board.move(Move(opposite, spot, move))
+                if not board.is_check(white):
+                    return False
+        return True
 
     def set_custom_board(self, board):
         self.board = {1: {}, 0: {}}
