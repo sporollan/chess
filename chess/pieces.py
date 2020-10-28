@@ -21,19 +21,35 @@ class Pawn(Piece):
     def __init__(self, white):
         super().__init__(white)
 
-    def get_moves(self, row, col, allied_pieces={}):
+    def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         if self.white:
-            return self.__get_white_moves(row, col, allied_pieces)
+            return self.__get_white_moves(row, col, allied_pieces, op_pieces)
         else:
-            return self.__get_black_moves(row, col, allied_pieces)
+            return self.__get_black_moves(row, col, allied_pieces, op_pieces)
 
-    def __get_white_moves(self, row, col, allied_pieces):
-        newcoord = (row - 1, col)
-        return self.verify(newcoord, allied_pieces)
+    def __get_white_moves(self, row, col, allied_pieces, op_pieces):
+        moves = []
+        moves += self.verify((row - 1, col), allied_pieces)
+        for n in range(-1, 2, 2):
+            try:
+                op_pieces[(row-1, col+n)]
+            except KeyError:
+                pass
+            else:
+                moves += [(row-1, col+n)]
+        return moves
 
-    def __get_black_moves(self, row, col, allied_pieces):
-        newcoord = (row + 1, col)
-        return self.verify(newcoord, allied_pieces)
+    def __get_black_moves(self, row, col, allied_pieces, op_pieces):
+        moves = []
+        moves += self.verify((row + 1, col), allied_pieces)
+        for n in range(-1, 2, 2):
+            try:
+                op_pieces[(row+1, col+n)]
+            except KeyError:
+                pass
+            else:
+                moves += [(row+1, col+n)]
+        return moves
 
     def get_name(self):
         return 'P'
@@ -43,7 +59,7 @@ class Knight(Piece):
     def __init__(self, white):
         super().__init__(white)
 
-    def get_moves(self, row, col, allied_pieces={}):
+    def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         if self.white:
             return self.__get_white_moves(row, col, allied_pieces)
         else:
@@ -67,7 +83,7 @@ class Rook(Piece):
     def __init__(self, white):
         super().__init__(white)
 
-    def get_moves(self, row, col, allied_pieces={}):
+    def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         moves = []
         sliding = [True, True, True, True]
         for n in range(1, 8):
@@ -113,7 +129,7 @@ class Bishop(Piece):
     def __init__(self, white):
         super().__init__(white)
 
-    def get_moves(self, row, col, allied_pieces={}):
+    def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         moves = []
         upright, downright, upleft, downleft = True, True, True, True
         for n in range(1, 8):
@@ -159,7 +175,7 @@ class Queen(Piece):
     def __init__(self, white):
         super().__init__(white)
 
-    def get_moves(self, row, col, allied_pieces={}):
+    def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         moves = []
         for n in range(1, 8):
             colTopFlag = col + n <= 7
@@ -193,7 +209,7 @@ class King(Piece):
     def __init__(self, white):
         super().__init__(white)
 
-    def get_moves(self, row, col, allied_pieces={}):
+    def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         moves = []
         for n in range(-1, 2, 2):
             moves += self.verify((row, col+n), allied_pieces)
