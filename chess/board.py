@@ -38,8 +38,8 @@ class Board():
             return False
 
     def get_move_array(self, row, col, white):
-        allied_pieces = self.board[white]
-        return self.board[white][(row, col)].get_moves(row, col, allied_pieces)
+        opposite = 0 if white else 1
+        return self.board[white][(row, col)].get_moves(row, col, self.board[white], self.board[opposite])
 
     def get_board(self, marr=[]):
         board = []
@@ -65,16 +65,17 @@ class Board():
 
     def is_check(self, white):
         allied_pieces = self.board[white]
+        opposite = 0 if white else 1
         opposite_king = self.__get_opposite_king(white)
         for key in self.board[white]:
-            if opposite_king in self.board[white][key].get_moves(key[0], key[1], allied_pieces):
+            if opposite_king in self.board[white][key].get_moves(key[0], key[1], self.board[white], self.board[opposite]):
                 return True
         return False
 
     def is_check_mate(self, white):
         opposite = 0 if white else 1
         for spot in self.board[opposite]:
-            for move in self.board[opposite][spot].get_moves(spot[0], spot[1], self.board[opposite]):
+            for move in self.board[opposite][spot].get_moves(spot[0], spot[1], self.board[opposite], self.board[white]):
                 board = Board(copy.deepcopy(self.board))
                 board.move(Move(opposite, spot, move))
                 if not board.is_check(white):
@@ -104,6 +105,7 @@ class Board():
                 return key
 
     def __init_piece_by_name(self, n, white):
+        white = int(white)
         if n == 'P':
             return p.Pawn(white)
         elif n == 'R':
