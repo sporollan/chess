@@ -4,7 +4,7 @@ class Piece():
     def __init__(self, white):
         self.white = white
 
-    def verify(self, newcoord, allied_pieces):
+    def verify_same_team(self, newcoord, allied_pieces):
         if newcoord[0] > 7 or newcoord[0] < 0:
             return []
         if newcoord[1] > 7 or newcoord[1] < 0:
@@ -16,6 +16,13 @@ class Piece():
         else:
             return []
 
+    def verify_op_team(self, newcoord, op_pieces):
+        try:
+            op_pieces[newcoord]
+        except KeyError:
+            return []
+        else:
+            return [newcoord]
 
 class Pawn(Piece):
     def __init__(self, white):
@@ -29,26 +36,16 @@ class Pawn(Piece):
 
     def __get_white_moves(self, row, col, allied_pieces, op_pieces):
         moves = []
-        moves += self.verify((row - 1, col), allied_pieces)
+        moves += self.verify_same_team((row - 1, col), allied_pieces)
         for n in range(-1, 2, 2):
-            try:
-                op_pieces[(row-1, col+n)]
-            except KeyError:
-                pass
-            else:
-                moves += [(row-1, col+n)]
+            moves += self.verify_op_team((row-1, col+n), op_pieces)
         return moves
 
     def __get_black_moves(self, row, col, allied_pieces, op_pieces):
         moves = []
-        moves += self.verify((row + 1, col), allied_pieces)
+        moves += self.verify_same_team((row + 1, col), allied_pieces)
         for n in range(-1, 2, 2):
-            try:
-                op_pieces[(row+1, col+n)]
-            except KeyError:
-                pass
-            else:
-                moves += [(row+1, col+n)]
+            moves += self.verify_op_team((row+1, col+n), op_pieces)
         return moves
 
     def get_name(self):
@@ -69,7 +66,7 @@ class Knight(Piece):
         moves = []
         for n in range(-1, 2, 2):
             newcoord = (row - 2, col + n)
-            moves += self.verify(newcoord, allied_pieces)
+            moves += self.verify_same_team(newcoord, allied_pieces)
         return moves
 
     def __get_black_moves(self, row, col, allied_pieces):
@@ -90,7 +87,7 @@ class Rook(Piece):
             if row + n <= 7:
                 if sliding[0]:
                     newcoord = (row + n, col)
-                    newmove = self.verify(newcoord, allied_pieces)
+                    newmove = self.verify_same_team(newcoord, allied_pieces)
                     if newmove:
                         moves += newmove
                     else:
@@ -98,7 +95,7 @@ class Rook(Piece):
             if row - n >= 0:
                 if sliding[1]:
                     newcoord = (row - n, col)
-                    newmove = self.verify(newcoord, allied_pieces)
+                    newmove = self.verify_same_team(newcoord, allied_pieces)
                     if newmove:
                         moves += newmove
                     else:
@@ -106,7 +103,7 @@ class Rook(Piece):
             if col + n <= 7:
                 if sliding[2]:
                     newcoord = (row, col + n)
-                    newmove = self.verify(newcoord, allied_pieces)
+                    newmove = self.verify_same_team(newcoord, allied_pieces)
                     if newmove:
                         moves += newmove
                     else:
@@ -114,7 +111,7 @@ class Rook(Piece):
             if col - n >= 0:
                 if sliding[3]:
                     newcoord = (row, col - n)
-                    newmove = self.verify(newcoord, allied_pieces)
+                    newmove = self.verify_same_team(newcoord, allied_pieces)
                     if newmove:
                         moves += newmove
                     else:
@@ -138,14 +135,14 @@ class Bishop(Piece):
             if row + n <= 7:
                 if colTopFlag and downright:
                     newcoord = (row + n, col + n)
-                    newmove = self.verify(newcoord, allied_pieces)
+                    newmove = self.verify_same_team(newcoord, allied_pieces)
                     if newmove:
                         moves += newmove
                     else:
                         downright = False
                 if colBotFlag and downleft:
                     newcoord = (row + n, col - n)
-                    newmove = self.verify(newcoord, allied_pieces)
+                    newmove = self.verify_same_team(newcoord, allied_pieces)
                     if newmove:
                         moves += newmove
                     else:
@@ -153,14 +150,14 @@ class Bishop(Piece):
             if row - n >= 0:
                 if colBotFlag and upleft:
                     newcoord = (row - n, col - n)
-                    newmove = self.verify(newcoord, allied_pieces)
+                    newmove = self.verify_same_team(newcoord, allied_pieces)
                     if newmove:
                         moves += newmove
                     else:
                         upleft = False
                 if colTopFlag and upright:
                     newcoord = (row - n, col + n)
-                    newmove = self.verify(newcoord, allied_pieces)
+                    newmove = self.verify_same_team(newcoord, allied_pieces)
                     if newmove:
                         moves += newmove
                     else:
@@ -212,9 +209,9 @@ class King(Piece):
     def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         moves = []
         for n in range(-1, 2, 2):
-            moves += self.verify((row, col+n), allied_pieces)
+            moves += self.verify_same_team((row, col+n), allied_pieces)
             for c in range(-1, 2):
-                moves += self.verify((row + n, col + c), allied_pieces)
+                moves += self.verify_same_team((row + n, col + c), allied_pieces)
         return moves
 
     def get_name(self):
