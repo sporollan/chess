@@ -8,14 +8,14 @@ class Test_board(unittest.TestCase):
         self.b = board.Board()
 
     def test_init_board(self):
-        expected = [['R', 'k', 'B', 'Q', 'K', 'B', 'k', 'R'],
+        expected = [['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
                     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
                     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
                     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-                    ['R', 'k', 'B', 'Q', 'K', 'B', 'k', 'R']]
+                    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']]
         self.assertEqual(self.b.get_board(), expected)
 
     def test_isPiece(self):
@@ -24,14 +24,14 @@ class Test_board(unittest.TestCase):
     def test_move(self):
         move = moves.Move(1, (6, 0), (5, 0))
         self.b.move(move)
-        expected = [['R', 'k', 'B', 'Q', 'K', 'B', 'k', 'R'],
+        expected = [['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
                     ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
                     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
                     [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
                     ['P', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
                     [' ', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-                    ['R', 'k', 'B', 'Q', 'K', 'B', 'k', 'R']]
+                    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']]
         self.assertEqual(self.b.get_board(), expected)
 
     def test_set_custom_board(self):

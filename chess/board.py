@@ -110,7 +110,7 @@ class Board():
             return p.Pawn(white)
         elif n == 'R':
             return p.Rook(white)
-        elif n == 'k':
+        elif n == 'N':
             return p.Knight(white)
         elif n == 'B':
             return p.Bishop(white)

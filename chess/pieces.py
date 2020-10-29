@@ -76,7 +76,7 @@ class Knight(Piece):
         return [(row + 2, col + 1), (row + 2, col - 1)]
 
     def get_name(self):
-        return 'k'
+        return 'N'
 
 
 class Rook(Piece):
