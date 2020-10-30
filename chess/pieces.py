@@ -136,31 +136,50 @@ class Bishop(Piece):
                 if colTopFlag and downright:
                     newcoord = (row + n, col + n)
                     newmove = self.verify_same_team(newcoord, allied_pieces)
-                    if newmove:
+                    newmove1 = self.verify_op_team(newcoord, op_pieces)
+                    if not newmove:
+                        downright = False
+                    elif newmove1:
+                        moves += newmove
+                        downright = False
+                    elif not newmove1:
                         moves += newmove
                     else:
+                        moves += newmove
                         downright = False
                 if colBotFlag and downleft:
                     newcoord = (row + n, col - n)
                     newmove = self.verify_same_team(newcoord, allied_pieces)
-                    if newmove:
+                    newmove1 = self.verify_op_team(newcoord, op_pieces)
+                    if not newmove:
+                        downleft = False
+                    elif not newmove1:
                         moves += newmove
                     else:
+                        moves += newmove
                         downleft = False
             if row - n >= 0:
                 if colBotFlag and upleft:
                     newcoord = (row - n, col - n)
                     newmove = self.verify_same_team(newcoord, allied_pieces)
-                    if newmove:
+                    newmove1 = self.verify_op_team(newcoord, op_pieces)
+                    if not newmove:
+                        upleft = False
+                    elif not newmove1:
                         moves += newmove
                     else:
+                        moves += newmove
                         upleft = False
                 if colTopFlag and upright:
                     newcoord = (row - n, col + n)
                     newmove = self.verify_same_team(newcoord, allied_pieces)
-                    if newmove:
+                    newmove1 = self.verify_op_team(newcoord, op_pieces)
+                    if not newmove:
+                        upright = False
+                    elif not newmove1:
                         moves += newmove
                     else:
+                        moves += newmove
                         upright = False
         return moves
 
