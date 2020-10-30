@@ -24,7 +24,7 @@ class Piece():
         else:
             return [newcoord]
 
-    def slide(self, moves, newcoord, allied_pieces, op_pieces):
+    def __slide(self, moves, newcoord, allied_pieces, op_pieces):
         newmove = self.verify_same_team(newcoord, allied_pieces)
         newmove1 = self.verify_op_team(newcoord, op_pieces)
         if not newmove:
@@ -38,6 +38,43 @@ class Piece():
             moves += newmove
             return False
         return True
+
+    def slide_diagonal(self, row, col, allied_pieces, op_pieces):
+        moves = []
+        upright, downright, upleft, downleft = True, True, True, True
+        for n in range(1, 8):
+            if downright:
+                newcoord = (row + n, col + n)
+                downright = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+            if downleft:
+                newcoord = (row + n, col - n)
+                downleft = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+            if upleft:
+                newcoord = (row - n, col - n)
+                upleft = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+            if upright:
+                newcoord = (row - n, col + n)
+                upright = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+        return moves
+
+    def slide_rook(self, row, col, allied_pieces, op_pieces):
+        moves = []
+        up, right, down, left = True, True, True, True
+        for n in range(1, 8):
+            if up:
+                newcoord = (row - n, col)
+                up = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+            if right:
+                newcoord = (row, col + n)
+                right = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+            if down:
+                newcoord = (row + n, col)
+                down = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+            if left:
+                newcoord = (row, col - n)
+                left = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+        return moves
+
 
 class Pawn(Piece):
     def __init__(self, white):
@@ -96,42 +133,7 @@ class Rook(Piece):
         super().__init__(white)
 
     def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
-        moves = []
-        sliding = [True, True, True, True]
-        for n in range(1, 8):
-            if row + n <= 7:
-                if sliding[0]:
-                    newcoord = (row + n, col)
-                    newmove = self.verify_same_team(newcoord, allied_pieces)
-                    if newmove:
-                        moves += newmove
-                    else:
-                        sliding[0] = False
-            if row - n >= 0:
-                if sliding[1]:
-                    newcoord = (row - n, col)
-                    newmove = self.verify_same_team(newcoord, allied_pieces)
-                    if newmove:
-                        moves += newmove
-                    else:
-                        sliding[1] = False
-            if col + n <= 7:
-                if sliding[2]:
-                    newcoord = (row, col + n)
-                    newmove = self.verify_same_team(newcoord, allied_pieces)
-                    if newmove:
-                        moves += newmove
-                    else:
-                        sliding[2] = False
-            if col - n >= 0:
-                if sliding[3]:
-                    newcoord = (row, col - n)
-                    newmove = self.verify_same_team(newcoord, allied_pieces)
-                    if newmove:
-                        moves += newmove
-                    else:
-                        sliding[3] = False
-        return moves
+        return self.slide_rook(row, col, allied_pieces, op_pieces)
 
     def get_name(self):
         return 'R'
@@ -142,22 +144,7 @@ class Bishop(Piece):
         super().__init__(white)
 
     def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
-        moves = []
-        upright, downright, upleft, downleft = True, True, True, True
-        for n in range(1, 8):
-            if downright:
-                newcoord = (row + n, col + n)
-                downright = self.slide(moves, newcoord, allied_pieces, op_pieces)
-            if downleft:
-                newcoord = (row + n, col - n)
-                downleft = self.slide(moves, newcoord, allied_pieces, op_pieces)
-            if upleft:
-                newcoord = (row - n, col - n)
-                upleft = self.slide(moves, newcoord, allied_pieces, op_pieces)
-            if upright:
-                newcoord = (row - n, col + n)
-                upright = self.slide(moves, newcoord, allied_pieces, op_pieces)
-        return moves
+        return self.slide_diagonal(row, col, allied_pieces, op_pieces)
 
     def get_name(self):
         return 'B'
@@ -169,28 +156,8 @@ class Queen(Piece):
 
     def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         moves = []
-        for n in range(1, 8):
-            colTopFlag = col + n <= 7
-            colBotFlag = col - n >= 0
-            if row + n <= 7:
-                if colTopFlag:
-                    moves.append((row + n, col + n))
-                if colBotFlag:
-                    moves.append((row + n, col - n))
-            if row - n >= 0:
-                if colBotFlag:
-                    moves.append((row - n, col - n))
-                if colTopFlag:
-                    moves.append((row - n, col + n))
-        for n in range(1, 8):
-            if row + n <= 7:
-                moves.append((row + n, col))
-            if row - n >= 0:
-                moves.append((row - n, col))
-            if col + n <= 7:
-                moves.append((row, col + n))
-            if col - n >= 0:
-                moves.append((row, col - n))
+        moves += self.slide_diagonal(row, col, allied_pieces, op_pieces)
+        moves += self.slide_rook(row, col, allied_pieces, op_pieces)
         return moves
 
     def get_name(self):
