@@ -24,6 +24,21 @@ class Piece():
         else:
             return [newcoord]
 
+    def slide(self, moves, newcoord, allied_pieces, op_pieces):
+        newmove = self.verify_same_team(newcoord, allied_pieces)
+        newmove1 = self.verify_op_team(newcoord, op_pieces)
+        if not newmove:
+            return False
+        elif newmove1:
+            moves += newmove
+            return False
+        elif not newmove1:
+            moves += newmove
+        else:
+            moves += newmove
+            return False
+        return True
+
 class Pawn(Piece):
     def __init__(self, white):
         super().__init__(white)
@@ -130,57 +145,18 @@ class Bishop(Piece):
         moves = []
         upright, downright, upleft, downleft = True, True, True, True
         for n in range(1, 8):
-            colTopFlag = col + n <= 7
-            colBotFlag = col - n >= 0
-            if row + n <= 7:
-                if colTopFlag and downright:
-                    newcoord = (row + n, col + n)
-                    newmove = self.verify_same_team(newcoord, allied_pieces)
-                    newmove1 = self.verify_op_team(newcoord, op_pieces)
-                    if not newmove:
-                        downright = False
-                    elif newmove1:
-                        moves += newmove
-                        downright = False
-                    elif not newmove1:
-                        moves += newmove
-                    else:
-                        moves += newmove
-                        downright = False
-                if colBotFlag and downleft:
-                    newcoord = (row + n, col - n)
-                    newmove = self.verify_same_team(newcoord, allied_pieces)
-                    newmove1 = self.verify_op_team(newcoord, op_pieces)
-                    if not newmove:
-                        downleft = False
-                    elif not newmove1:
-                        moves += newmove
-                    else:
-                        moves += newmove
-                        downleft = False
-            if row - n >= 0:
-                if colBotFlag and upleft:
-                    newcoord = (row - n, col - n)
-                    newmove = self.verify_same_team(newcoord, allied_pieces)
-                    newmove1 = self.verify_op_team(newcoord, op_pieces)
-                    if not newmove:
-                        upleft = False
-                    elif not newmove1:
-                        moves += newmove
-                    else:
-                        moves += newmove
-                        upleft = False
-                if colTopFlag and upright:
-                    newcoord = (row - n, col + n)
-                    newmove = self.verify_same_team(newcoord, allied_pieces)
-                    newmove1 = self.verify_op_team(newcoord, op_pieces)
-                    if not newmove:
-                        upright = False
-                    elif not newmove1:
-                        moves += newmove
-                    else:
-                        moves += newmove
-                        upright = False
+            if downright:
+                newcoord = (row + n, col + n)
+                downright = self.slide(moves, newcoord, allied_pieces, op_pieces)
+            if downleft:
+                newcoord = (row + n, col - n)
+                downleft = self.slide(moves, newcoord, allied_pieces, op_pieces)
+            if upleft:
+                newcoord = (row - n, col - n)
+                upleft = self.slide(moves, newcoord, allied_pieces, op_pieces)
+            if upright:
+                newcoord = (row - n, col + n)
+                upright = self.slide(moves, newcoord, allied_pieces, op_pieces)
         return moves
 
     def get_name(self):
