@@ -24,7 +24,12 @@ class Piece():
         else:
             return [newcoord]
 
-    def __slide(self, moves, newcoord, allied_pieces, op_pieces):
+
+class Sliding_Piece(Piece):
+    def __init__(self, white):
+        super().__init__(white)
+
+    def slide(self, moves, newcoord, allied_pieces, op_pieces):
         newmove = self.verify_same_team(newcoord, allied_pieces)
         newmove1 = self.verify_op_team(newcoord, op_pieces)
         if not newmove:
@@ -39,23 +44,10 @@ class Piece():
             return False
         return True
 
-    def slide_diagonal(self, row, col, allied_pieces, op_pieces):
-        moves = []
-        upright, downright, upleft, downleft = True, True, True, True
-        for n in range(1, 8):
-            if downright:
-                newcoord = (row + n, col + n)
-                downright = self.__slide(moves, newcoord, allied_pieces, op_pieces)
-            if downleft:
-                newcoord = (row + n, col - n)
-                downleft = self.__slide(moves, newcoord, allied_pieces, op_pieces)
-            if upleft:
-                newcoord = (row - n, col - n)
-                upleft = self.__slide(moves, newcoord, allied_pieces, op_pieces)
-            if upright:
-                newcoord = (row - n, col + n)
-                upright = self.__slide(moves, newcoord, allied_pieces, op_pieces)
-        return moves
+
+class Hor_Vert_Slider(Sliding_Piece):
+    def __init__(self, white):
+        super().__init__(white)
 
     def slide_rook(self, row, col, allied_pieces, op_pieces):
         moves = []
@@ -63,16 +55,39 @@ class Piece():
         for n in range(1, 8):
             if up:
                 newcoord = (row - n, col)
-                up = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+                up = self.slide(moves, newcoord, allied_pieces, op_pieces)
             if right:
                 newcoord = (row, col + n)
-                right = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+                right = self.slide(moves, newcoord, allied_pieces, op_pieces)
             if down:
                 newcoord = (row + n, col)
-                down = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+                down = self.slide(moves, newcoord, allied_pieces, op_pieces)
             if left:
                 newcoord = (row, col - n)
-                left = self.__slide(moves, newcoord, allied_pieces, op_pieces)
+                left = self.slide(moves, newcoord, allied_pieces, op_pieces)
+        return moves
+
+
+class Diagonal_Slider(Sliding_Piece):
+    def __init__(self, white):
+        super().__init__(white)
+
+    def slide_diagonal(self, row, col, allied_pieces, op_pieces):
+        moves = []
+        upright, downright, upleft, downleft = True, True, True, True
+        for n in range(1, 8):
+            if downright:
+                newcoord = (row + n, col + n)
+                downright = self.slide(moves, newcoord, allied_pieces, op_pieces)
+            if downleft:
+                newcoord = (row + n, col - n)
+                downleft = self.slide(moves, newcoord, allied_pieces, op_pieces)
+            if upleft:
+                newcoord = (row - n, col - n)
+                upleft = self.slide(moves, newcoord, allied_pieces, op_pieces)
+            if upright:
+                newcoord = (row - n, col + n)
+                upright = self.slide(moves, newcoord, allied_pieces, op_pieces)
         return moves
 
 
@@ -128,7 +143,7 @@ class Knight(Piece):
         return 'N'
 
 
-class Rook(Piece):
+class Rook(Hor_Vert_Slider):
     def __init__(self, white):
         super().__init__(white)
 
@@ -139,7 +154,7 @@ class Rook(Piece):
         return 'R'
 
 
-class Bishop(Piece):
+class Bishop(Diagonal_Slider):
     def __init__(self, white):
         super().__init__(white)
 
@@ -150,7 +165,7 @@ class Bishop(Piece):
         return 'B'
 
 
-class Queen(Piece):
+class Queen(Hor_Vert_Slider, Diagonal_Slider):
     def __init__(self, white):
         super().__init__(white)
 
