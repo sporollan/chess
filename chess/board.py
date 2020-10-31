@@ -18,10 +18,10 @@ class Board():
         piece = self.board[move.white].pop((move.move_start[0], move.move_start[1]))
         if piece.get_name() == 'K' and piece.can_castle:
             if abs(col - move.move_start[1]) > 1:
-                if col in (1, 6):
+                if col == 6:
                     self.board[move.white][(row, 5)] = self.board[move.white].pop((row, 7))
                     self.board[move.white][(row, 5)].can_castle = False
-                else:
+                elif col == 1:
                     self.board[move.white][(row, 2)] = self.board[move.white].pop((row, 0))
                     self.board[move.white][(row, 2)].can_castle = False
                 piece.can_castle = False

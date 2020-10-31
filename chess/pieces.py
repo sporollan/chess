@@ -100,29 +100,37 @@ class Castling_Piece(Piece):
     def castle_right(self, row, col, allied_pieces, op_pieces):
         for n in range(1, 3):
             try:
-                allied_pieces[self.white][(row, col+n)]
+                allied_pieces[(row, col+n)]
                 return []
-            except:
-                if n == 2:
-                    try:
-                        if allied_pieces[(row, 7)].can_castle:
-                            return [(row, col+n)]
-                    except KeyError:
-                        return []
+            except KeyError:
+                try:
+                    op_pieces[(row, col+n)]
+                    return []
+                except KeyError:
+                    if n == 2:
+                        try:
+                            if allied_pieces[(row, 7)].can_castle:
+                                return [(row, col+n)]
+                        except KeyError:
+                            return []
         return []
 
     def castle_left(self, row, col, allied_pieces, op_pieces):
         for n in range(1, 4):
             try:
-                allied_pieces[self.white][(row, col-n)]
+                allied_pieces[(row, col-n)]
                 return []
-            except:
-                if n == 3:
-                    try:
-                        if allied_pieces[(row, 0)].can_castle:
-                            return [(row, col-n)]
-                    except KeyError:
-                        return []
+            except KeyError:
+                try:
+                    op_pieces[(row, col+n)]
+                    return []
+                except KeyError:
+                    if n == 3:
+                        try:
+                            if allied_pieces[(row, 0)].can_castle:
+                                return [(row, col-n)]
+                        except KeyError:
+                            return []
         return []
 
 
