@@ -91,6 +91,41 @@ class Diagonal_Slider(Sliding_Piece):
         return moves
 
 
+class Castling_Piece(Piece):
+    def __init__(self, white):
+        super().__init__(white)
+        self.can_castle = True
+        self.castling = False
+
+    def castle_right(self, row, col, allied_pieces, op_pieces):
+        for n in range(1, 3):
+            try:
+                allied_pieces[self.white][(row, col+n)]
+                return []
+            except:
+                if n == 2:
+                    try:
+                        if allied_pieces[(row, 7)].can_castle:
+                            return [(row, col+n)]
+                    except KeyError:
+                        return []
+        return []
+
+    def castle_left(self, row, col, allied_pieces, op_pieces):
+        for n in range(1, 4):
+            try:
+                allied_pieces[self.white][(row, col-n)]
+                return []
+            except:
+                if n == 3:
+                    try:
+                        if allied_pieces[(row, 0)].can_castle:
+                            return [(row, col-n)]
+                    except KeyError:
+                        return []
+        return []
+
+
 class Pawn(Piece):
     def __init__(self, white):
         super().__init__(white)
@@ -143,7 +178,7 @@ class Knight(Piece):
         return 'N'
 
 
-class Rook(Hor_Vert_Slider):
+class Rook(Hor_Vert_Slider, Castling_Piece):
     def __init__(self, white):
         super().__init__(white)
 
@@ -179,7 +214,7 @@ class Queen(Hor_Vert_Slider, Diagonal_Slider):
         return 'Q'
 
 
-class King(Piece):
+class King(Castling_Piece):
     def __init__(self, white):
         super().__init__(white)
 
@@ -189,6 +224,9 @@ class King(Piece):
             moves += self.verify_same_team((row, col+n), allied_pieces)
             for c in range(-1, 2):
                 moves += self.verify_same_team((row + n, col + c), allied_pieces)
+        if self.can_castle:
+            moves += self.castle_right(row, col, allied_pieces, op_pieces)
+            moves += self.castle_left(row, col, allied_pieces, op_pieces)
         return moves
 
     def get_name(self):

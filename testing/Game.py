@@ -8,7 +8,7 @@ class Test_game(unittest.TestCase):
         self.g = game.Game()
 
     @parameterized.expand([
-        ((6, 0), (5, 0),
+        ('white moves pawn', 1, (6, 0), (5, 0),
             [['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
              ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
              [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -25,7 +25,7 @@ class Test_game(unittest.TestCase):
              ['P', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
              [' ', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
              ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']]),
-        ((6, 0), (2, 0),
+        ('select cancel move', 1, (6, 0), (2, 0),
             [['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
              ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
              [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -43,11 +43,61 @@ class Test_game(unittest.TestCase):
              ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
              ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']]),
     ])
-    def test_play_double_input(self, spot1, spot2, expected1, expected2):
+    def test_play_double_input(self, name, turn, spot1, spot2, expected1, expected2):
+        self.g.turn = turn
         board = self.g.play(spot1)
         self.assertEqual(board, expected1)
         board = self.g.play(spot2)
         self.assertEqual(board, expected2)
+
+    @parameterized.expand([
+        ('white castlign right',
+            [[' ', 'R0', ' ', ' ', ' ',  ' ', ' ', ' '],
+             [' ',  ' ', ' ', ' ', ' ',  ' ', ' ', ' '],
+             [' ',  ' ', ' ', ' ', ' ',  ' ', ' ', ' '],
+             [' ',  ' ', ' ', ' ', ' ',  ' ', ' ', ' '],
+             [' ',  ' ', ' ', ' ', ' ',  ' ', ' ', ' '],
+             [' ',  ' ', ' ', ' ', ' ',  ' ', ' ', ' '],
+             [' ',  ' ', ' ', ' ', ' ',  ' ', ' ', ' '],
+             ['R1', ' ', ' ', ' ', 'K1', ' ', ' ', 'R1']],
+             1, ((1, 1), (1, 1)), ((1, 1), (1, 1)),
+             ((1, 1), (1, 1)), ((1, 1), (1, 1)),
+             ((1, 1), (1, 1)), ((7, 4), (7, 6)),
+            [[' ', 'R', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', '*', '*', '*', ' ', ' '],
+             ['R', '*', ' ', '*', 'K', '*', '*', 'R']],
+            [[' ', 'R', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+             ['R', ' ', ' ', ' ', ' ', 'R', 'K', ' ']]),
+    ])
+    def test_castling(self, name, custom_board, turn, move1, move2, move3, move4, move5, move6, expected_movearray, expected):
+        self.g.turn = turn
+        self.g.board.set_custom_board(custom_board)
+        board = self.g.play(move1[0])
+        board = self.g.play(move1[1])
+        board = self.g.play(move2[0])
+        board = self.g.play(move2[1])
+        board = self.g.play(move3[0])
+        board = self.g.play(move3[1])
+        board = self.g.play(move4[0])
+        board = self.g.play(move4[1])
+        board = self.g.play(move5[0])
+        board = self.g.play(move5[1])
+        board = self.g.play(move6[0])
+        self.assertEqual(board, expected_movearray)
+        board = self.g.play(move6[1])
+        self.assertEqual(board, expected)
+
 
     @parameterized.expand([
         ((6, 0), (5, 0), (0, 1), (2, 2), (7, 0), (6, 0),
@@ -530,7 +580,7 @@ class Test_game(unittest.TestCase):
              [' ', ' ',  ' ', ' ', ' ',  ' ',  ' ',  ' ',],
              [' ', ' ',  ' ', ' ', ' ',  ' ',  ' ',  ' ',],
              [' ', 'K1', ' ', ' ', ' ',  ' ',  ' ',  ' ',]],
-             1, (1, 5), (1, 6)
+             1, (1, 5), (1, 6), False, False
         ),
         (
             [[' ',  ' ',  ' ',  ' ',  'K0', ' ', ' ', ' ',],
@@ -541,12 +591,14 @@ class Test_game(unittest.TestCase):
              [' ',  ' ',  ' ',  ' ',  ' ',  ' ', ' ', ' ',],
              [' ',  ' ',  'Q0', ' ',  ' ',  ' ', ' ', ' ',],
              ['K1', ' ',  ' ',  ' ',  ' ',  ' ', ' ', ' ',]],
-             0, (6, 2), (6, 1)
+             0, (6, 2), (6, 1), False, False
         ),
     ])
-    def test_check_mate(self, custom_board, turn, move_start, move_end):
+    def test_check_mate(self, custom_board, turn, move_start, move_end, castling_white, castling_black):
         self.g.board.set_custom_board(custom_board)
         self.g.turn = turn
+        self.g.board.board[0][self.g.board.get_king(0)].can_castle = castling_black
+        self.g.board.board[1][self.g.board.get_king(1)].can_castle = castling_white
         self.g.play(move_start)
         self.g.play(move_end)
         self.assertTrue(self.g.check)

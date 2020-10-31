@@ -16,7 +16,18 @@ class Board():
     def move(self, move):
         row, col = move.move_end[0], move.move_end[1]
         piece = self.board[move.white].pop((move.move_start[0], move.move_start[1]))
+        if piece.get_name() == 'K' and piece.can_castle:
+            if abs(col - move.move_start[1]) > 1:
+                if col in (1, 6):
+                    self.board[move.white][(row, 5)] = self.board[move.white].pop((row, 7))
+                    self.board[move.white][(row, 5)].can_castle = False
+                else:
+                    self.board[move.white][(row, 2)] = self.board[move.white].pop((row, 0))
+                    self.board[move.white][(row, 2)].can_castle = False
+                piece.can_castle = False
         self.__kill_piece(move)
+        if piece.get_name() == 'R':
+            piece.can_castle = False
         self.board[move.white][(move.move_end[0], move.move_end[1])] = piece
 
     def __kill_piece(self, move):
@@ -66,7 +77,7 @@ class Board():
     def is_check(self, white):
         allied_pieces = self.board[white]
         opposite = 0 if white else 1
-        opposite_king = self.__get_opposite_king(white)
+        opposite_king = self.get_king(opposite)
         for key in self.board[white]:
             if opposite_king in self.board[white][key].get_moves(key[0], key[1], self.board[white], self.board[opposite]):
                 return True
@@ -98,10 +109,9 @@ class Board():
                         allied_pieces[(sp.row, sp.col)] = True
         return allied_pieces
 
-    def __get_opposite_king(self, white):
-        opposite = 0 if white else 1
-        for key in self.board[opposite]:
-            if self.board[opposite][key].get_name() == 'K':
+    def get_king(self, white):
+        for key in self.board[white]:
+            if self.board[white][key].get_name() == 'K':
                 return key
 
     def __init_piece_by_name(self, n, white):
