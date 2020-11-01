@@ -122,7 +122,7 @@ class Castling_Piece(Piece):
                 return []
             except KeyError:
                 try:
-                    op_pieces[(row, col+n)]
+                    op_pieces[(row, col-n)]
                     return []
                 except KeyError:
                     if n == 3:
