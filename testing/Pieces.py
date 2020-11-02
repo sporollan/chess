@@ -6,9 +6,9 @@ from parameterized import parameterized
 class Test_pieces(unittest.TestCase):
 
     @parameterized.expand([
-        ('white can move', 1, (1, 1), [(0, 1)]),
-        ('black can move', 0, (1, 1), [(2, 1)]),
-        ('white cant move', 1, (1, 1), [], {(0, 1): True}),
+        ('white can move', 1, (6, 2), [(5, 2), (4, 2)]),
+        ('black can move', 0, (1, 1), [(2, 1), (3, 1)]),
+        ('white cant move', 1, (6, 2), [], {(5, 2): True}),
         ('black cant move', 0, (1, 1), [], {(2, 1): True}),
     ])
     def test_pawn(self, name, side, coord, expected, allied_pieces={}):
