@@ -137,6 +137,7 @@ class Castling_Piece(Piece):
 class Pawn(Piece):
     def __init__(self, white):
         super().__init__(white)
+        self.move_range = 3
 
     def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         if self.white:
@@ -146,14 +147,24 @@ class Pawn(Piece):
 
     def __get_white_moves(self, row, col, allied_pieces, op_pieces):
         moves = []
-        moves += self.verify_same_team((row - 1, col), allied_pieces)
+        for n in range(1, self.move_range):
+            newcoord = (row-n, col)
+            if self.verify_same_team(newcoord, allied_pieces) and not self.verify_op_team(newcoord, op_pieces):
+                moves.append(newcoord)
+            else:
+                break
         for n in range(-1, 2, 2):
             moves += self.verify_op_team((row-1, col+n), op_pieces)
         return moves
 
     def __get_black_moves(self, row, col, allied_pieces, op_pieces):
         moves = []
-        moves += self.verify_same_team((row + 1, col), allied_pieces)
+        for n in range(1, self.move_range):
+            newcoord = (row+n, col)
+            if self.verify_same_team(newcoord, allied_pieces) and not self.verify_op_team(newcoord, op_pieces):
+                moves.append(newcoord)
+            else:
+                break
         for n in range(-1, 2, 2):
             moves += self.verify_op_team((row+1, col+n), op_pieces)
         return moves

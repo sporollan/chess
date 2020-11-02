@@ -25,6 +25,8 @@ class Board():
                     self.board[move.white][(row, 2)] = self.board[move.white].pop((row, 0))
                     self.board[move.white][(row, 2)].can_castle = False
             piece.can_castle = False
+        if piece.get_name() == 'P' and piece.move_range == 3:
+            piece.move_range = 2
         self.__kill_piece(move)
         if piece.get_name() == 'R':
             piece.can_castle = False
