@@ -138,6 +138,7 @@ class Pawn(Piece):
     def __init__(self, white):
         super().__init__(white)
         self.move_range = 3
+        self.en_passant = False
 
     def get_moves(self, row, col, allied_pieces={}, op_pieces={}):
         if self.white:
@@ -154,7 +155,12 @@ class Pawn(Piece):
             else:
                 break
         for n in range(-1, 2, 2):
-            moves += self.verify_op_team((row-1, col+n), op_pieces)
+            newcoord = (row-1, col+n)
+            try:
+                if self.verify_op_team((row-1, col+n), op_pieces) or op_pieces[(row, col+n)].en_passant:
+                    moves.append(newcoord)
+            except (KeyError, AttributeError):
+                pass
         return moves
 
     def __get_black_moves(self, row, col, allied_pieces, op_pieces):
@@ -166,7 +172,12 @@ class Pawn(Piece):
             else:
                 break
         for n in range(-1, 2, 2):
-            moves += self.verify_op_team((row+1, col+n), op_pieces)
+            newcoord = (row+1, col+n)
+            try:
+                if self.verify_op_team((row+1, col+n), op_pieces) or op_pieces[(row, col+n)].en_passant:
+                    moves.append(newcoord)
+            except (KeyError, AttributeError):
+                pass
         return moves
 
     def get_name(self):

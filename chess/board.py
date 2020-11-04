@@ -1,4 +1,3 @@
-from spot import Spot
 from moves import Move
 import pieces as p
 import copy
@@ -16,7 +15,7 @@ class Board():
     def move(self, move):
         row, col = move.move_end[0], move.move_end[1]
         piece = self.board[move.white].pop((move.move_start[0], move.move_start[1]))
-        if piece.get_name() == 'K' and piece.can_castle:
+        if type(piece) is p.King and piece.can_castle:
             if abs(col - move.move_start[1]) > 1:
                 if col == 6:
                     self.board[move.white][(row, 5)] = self.board[move.white].pop((row, 7))
@@ -25,10 +24,14 @@ class Board():
                     self.board[move.white][(row, 2)] = self.board[move.white].pop((row, 0))
                     self.board[move.white][(row, 2)].can_castle = False
             piece.can_castle = False
-        if piece.get_name() == 'P' and piece.move_range == 3:
-            piece.move_range = 2
+        if type(piece) is p.Pawn:
+            piece.en_passant = False
+            if piece.move_range == 3:
+                piece.move_range = 2
+                if abs(row - move.move_start[0]) == 2:
+                    piece.en_passant = True
         self.__kill_piece(move)
-        if piece.get_name() == 'R':
+        if type(piece) is p.Rook:
             piece.can_castle = False
         self.board[move.white][(move.move_end[0], move.move_end[1])] = piece
 
