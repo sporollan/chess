@@ -9,12 +9,11 @@ class Board():
         else:
             self.board = {1: {(row, col): self.__init_piece(row, col, 1) for col in range(8) for row in range(6, 8)},
                           0: {(row, col): self.__init_piece(row, col, 0) for col in range(8) for row in range(0, 2)}}
-        self.dead_white = []
-        self.dead_black = []
 
     def move(self, move):
         row, col = move.move_end[0], move.move_end[1]
         piece = self.board[move.white].pop((move.move_start[0], move.move_start[1]))
+        op = 0 if move.white else 1
         if type(piece) is p.King and piece.can_castle:
             if abs(col - move.move_start[1]) > 1:
                 if col == 6:
@@ -30,22 +29,25 @@ class Board():
                 piece.move_range = 2
                 if abs(row - move.move_start[0]) == 2:
                     piece.en_passant = True
-        self.__kill_piece(move)
+            try:
+                if move.white:
+                    if self.board[op][(row+1, col)].en_passant:
+                        self.__kill_piece(op, row+1, col)
+                else:
+                    if self.board[op][(row-1, col)].en_passant:
+                        self.__kill_piece(op, row-1, col)
+            except (KeyError, AttributeError):
+                pass
+        self.__kill_piece(op, row, col)
         if type(piece) is p.Rook:
             piece.can_castle = False
         self.board[move.white][(move.move_end[0], move.move_end[1])] = piece
 
-    def __kill_piece(self, move):
-        opposite = 0 if move.white else 1
+    def __kill_piece(self, op, row, col):
         try:
-            killed = self.board[opposite].pop((move.move_end[0], move.move_end[1]))
+            killed = self.board[op].pop((row, col))
         except KeyError:
             pass
-        else:
-            if move.white:
-                self.dead_black.append(killed)
-            else:
-                self.dead_white.append(killed)
 
     def isPiece(self, row, col, turn):
         try:
