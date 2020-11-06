@@ -999,3 +999,34 @@ class Test_game(unittest.TestCase):
         self.assertEqual(board, expected1)
         board = self.g.play(move2[1])
         self.assertEqual(board, expected2)
+
+    @parameterized.expand([
+        (
+            [[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', 'P1', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',]],
+             1, ((1, 1), (0, 1)), (4, 9),
+            [[' ', 'Q', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',],
+             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',]],
+        ),
+    ])
+    def test_pawn_promotion(self, custom_board, turn, move1, spot, expected):
+        self.g.turn = turn
+        op = 0 if turn else 1
+        self.g.board.set_custom_board(custom_board)
+        self.g.play(move1[0])
+        self.g.play(move1[1])
+        self.assertEqual(self.g.turn, turn)
+        self.assertEqual(self.g.play(spot), expected)
+        self.assertEqual(self.g.turn, op)
