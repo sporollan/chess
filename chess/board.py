@@ -23,7 +23,9 @@ class Board():
                     self.board[move.white][(row, 2)] = self.board[move.white].pop((row, 0))
                     self.board[move.white][(row, 2)].can_castle = False
             piece.can_castle = False
+        pawn_promotion = False
         if type(piece) is p.Pawn:
+            pawn_promotion = row in (0, 7)
             piece.en_passant = False
             if piece.move_range == 3:
                 piece.move_range = 2
@@ -38,10 +40,21 @@ class Board():
                         self.__kill_piece(op, row-1, col)
             except (KeyError, AttributeError):
                 pass
+            if col > 7:
+                if col == 9:
+                    piece = p.Queen(move.white)
+                elif col == 10:
+                    piece = p.Rook(move.white)
+                elif col == 11:
+                    piece = p.Bishop(move.white)
+                elif col == 12:
+                    piece = p.Knight(move.white)
+                row, col = move.move_start
         self.__kill_piece(op, row, col)
         if type(piece) is p.Rook:
             piece.can_castle = False
-        self.board[move.white][(move.move_end[0], move.move_end[1])] = piece
+        self.board[move.white][(row, col)] = piece
+        return pawn_promotion
 
     def __kill_piece(self, op, row, col):
         try:
@@ -75,10 +88,16 @@ class Board():
                     newline.append(' ')
             board.append(newline)
         for m in marr:
-            if board[m[0]][m[1]] == ' ':
-                board[m[0]][m[1]] = '*'
-            else:
-                board[m[0]][m[1]] += '*'
+            try:
+                if board[m[0]][m[1]] == ' ':
+                    board[m[0]][m[1]] = '*'
+                else:
+                    board[m[0]][m[1]] += '*'
+            except IndexError:
+                board[4].append(' ')
+                board[4] += ['*' for _ in range(4)]
+
+
         return board
 
     def is_check(self, white):

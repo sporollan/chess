@@ -161,6 +161,8 @@ class Pawn(Piece):
                     moves.append(newcoord)
             except (KeyError, AttributeError):
                 pass
+        if row in (0, 7):
+            moves += [(4, 9), (4, 10), (4, 11), (4, 12)]
         return moves
 
     def __get_black_moves(self, row, col, allied_pieces, op_pieces):
