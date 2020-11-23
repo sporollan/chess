@@ -1,5 +1,4 @@
 import players
-import pieces as p
 from board import Board
 from moves import Move
 
@@ -24,7 +23,9 @@ class Game():
                     self.moves.append(move)
                     if pawn_promotion:
                         self.move_start = spot
-                        self.move_array = self.board.get_move_array(spot[0], spot[1], self.turn)
+                        self.move_array = self.board.get_move_array(spot[0],
+                                                                    spot[1],
+                                                                    self.turn)
                         return self.board.get_board(self.move_array)
                     self.check = self.board.is_check(self.turn)
                     if self.check:

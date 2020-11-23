@@ -2,26 +2,31 @@ from moves import Move
 import pieces as p
 import copy
 
+
 class Board():
     def __init__(self, board=None):
         if board:
             self.board = board
         else:
-            self.board = {1: {(row, col): self.__init_piece(row, col, 1) for col in range(8) for row in range(6, 8)},
-                          0: {(row, col): self.__init_piece(row, col, 0) for col in range(8) for row in range(0, 2)}}
+            self.board = {1: {(row, col): self.__init_piece(row, col, 1)
+                              for col in range(8) for row in range(6, 8)},
+                          0: {(row, col): self.__init_piece(row, col, 0)
+                              for col in range(8) for row in range(0, 2)}}
 
     def move(self, move):
         row, col = move.move_end[0], move.move_end[1]
-        piece = self.board[move.white].pop((move.move_start[0], move.move_start[1]))
+        piece = self.board[move.white].pop((move.move_start[0],
+                                            move.move_start[1]))
         op = 0 if move.white else 1
+        w = move.white
         if type(piece) is p.King and piece.can_castle:
             if abs(col - move.move_start[1]) > 1:
                 if col == 6:
-                    self.board[move.white][(row, 5)] = self.board[move.white].pop((row, 7))
-                    self.board[move.white][(row, 5)].can_castle = False
+                    self.board[w][(row, 5)] = self.board[w].pop((row, 7))
+                    self.board[w][(row, 5)].can_castle = False
                 elif col == 1:
-                    self.board[move.white][(row, 2)] = self.board[move.white].pop((row, 0))
-                    self.board[move.white][(row, 2)].can_castle = False
+                    self.board[w][(row, 2)] = self.board[w].pop((row, 0))
+                    self.board[w][(row, 2)].can_castle = False
             piece.can_castle = False
         pawn_promotion = False
         if type(piece) is p.Pawn:
@@ -58,7 +63,7 @@ class Board():
 
     def __kill_piece(self, op, row, col):
         try:
-            killed = self.board[op].pop((row, col))
+            self.board[op].pop((row, col))
         except KeyError:
             pass
 
@@ -70,7 +75,9 @@ class Board():
 
     def get_move_array(self, row, col, white):
         opposite = 0 if white else 1
-        return self.board[white][(row, col)].get_moves(row, col, self.board[white], self.board[opposite])
+        return self.board[white][(row, col)].get_moves(row, col,
+                                                       self.board[white],
+                                                       self.board[opposite])
 
     def get_board(self, marr=[]):
         board = []
@@ -96,35 +103,37 @@ class Board():
             except IndexError:
                 board[4].append(' ')
                 board[4] += ['*' for _ in range(4)]
-
-
         return board
 
-    def is_check(self, white):
-        allied_pieces = self.board[white]
-        opposite = 0 if white else 1
-        opposite_king = self.get_king(opposite)
-        for key in self.board[white]:
-            if opposite_king in self.board[white][key].get_moves(key[0], key[1], self.board[white], self.board[opposite]):
+    def is_check(self, w):
+        op = 0 if w else 1
+        opposite_king = self.get_king(op)
+        for s in self.board[w]:
+            if opposite_king in self.board[w][s].get_moves(s[0], s[1],
+                                                           self.board[w],
+                                                           self.board[op]):
                 return True
         return False
 
     def is_check_mate(self, white):
         opposite = 0 if white else 1
-        for spot in self.board[opposite]:
-            for move in self.board[opposite][spot].get_moves(spot[0], spot[1], self.board[opposite], self.board[white]):
+        for s in self.board[opposite]:
+            for move in self.board[opposite][s].get_moves(s[0], s[1],
+                                                          self.board[opposite],
+                                                          self.board[white]):
                 board = Board(copy.deepcopy(self.board))
-                board.move(Move(opposite, spot, move))
+                board.move(Move(opposite, s, move))
                 if not board.is_check(white):
                     return False
         return True
 
     def set_custom_board(self, board):
         self.board = {1: {}, 0: {}}
-        for row, line in enumerate(board):
-            for col, p in enumerate(line):
-                if len(p) == 2:
-                    self.board[int(p[1])][(row, col)] = self.__init_piece_by_name(p[0], p[1])
+        for r, line in enumerate(board):
+            for c, s in enumerate(line):
+                if len(s) == 2:
+                    self.board[int(s[1])][(r, c)] = self.__init_pieceN(s[0],
+                                                                       s[1])
 
     def __get_allied_pieces(self, white):
         allied_pieces = {}
@@ -140,7 +149,7 @@ class Board():
             if self.board[white][key].get_name() == 'K':
                 return key
 
-    def __init_piece_by_name(self, n, white):
+    def __init_pieceN(self, n, white):
         white = int(white)
         if n == 'P':
             return p.Pawn(white)

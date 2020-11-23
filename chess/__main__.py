@@ -1,7 +1,7 @@
 import game
 
 
-if __name__ =='__main__':
+if __name__ == '__main__':
     g = game.Game()
     while 1:
         coords = input('move')

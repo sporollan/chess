@@ -78,13 +78,16 @@ class Diagonal_Slider(Sliding_Piece):
         for n in range(1, 8):
             if downright:
                 newcoord = (row + n, col + n)
-                downright = self.slide(moves, newcoord, allied_pieces, op_pieces)
+                downright = self.slide(moves, newcoord,
+                                       allied_pieces, op_pieces)
             if downleft:
                 newcoord = (row + n, col - n)
-                downleft = self.slide(moves, newcoord, allied_pieces, op_pieces)
+                downleft = self.slide(moves, newcoord,
+                                      allied_pieces, op_pieces)
             if upleft:
                 newcoord = (row - n, col - n)
-                upleft = self.slide(moves, newcoord, allied_pieces, op_pieces)
+                upleft = self.slide(moves, newcoord,
+                                    allied_pieces, op_pieces)
             if upright:
                 newcoord = (row - n, col + n)
                 upright = self.slide(moves, newcoord, allied_pieces, op_pieces)
@@ -150,14 +153,16 @@ class Pawn(Piece):
         moves = []
         for n in range(1, self.move_range):
             newcoord = (row-n, col)
-            if self.verify_same_team(newcoord, allied_pieces) and not self.verify_op_team(newcoord, op_pieces):
+            if (self.verify_same_team(newcoord, allied_pieces) and not
+               self.verify_op_team(newcoord, op_pieces)):
                 moves.append(newcoord)
             else:
                 break
         for n in range(-1, 2, 2):
             newcoord = (row-1, col+n)
             try:
-                if self.verify_op_team((row-1, col+n), op_pieces) or op_pieces[(row, col+n)].en_passant:
+                if (self.verify_op_team((row-1, col+n), op_pieces) or
+                   op_pieces[(row, col+n)].en_passant):
                     moves.append(newcoord)
             except (KeyError, AttributeError):
                 pass
@@ -169,14 +174,16 @@ class Pawn(Piece):
         moves = []
         for n in range(1, self.move_range):
             newcoord = (row+n, col)
-            if self.verify_same_team(newcoord, allied_pieces) and not self.verify_op_team(newcoord, op_pieces):
+            if (self.verify_same_team(newcoord, allied_pieces) and not
+               self.verify_op_team(newcoord, op_pieces)):
                 moves.append(newcoord)
             else:
                 break
         for n in range(-1, 2, 2):
             newcoord = (row+1, col+n)
             try:
-                if self.verify_op_team((row+1, col+n), op_pieces) or op_pieces[(row, col+n)].en_passant:
+                if (self.verify_op_team((row+1, col+n), op_pieces) or
+                   op_pieces[(row, col+n)].en_passant):
                     moves.append(newcoord)
             except (KeyError, AttributeError):
                 pass
@@ -255,7 +262,8 @@ class King(Castling_Piece):
         for n in range(-1, 2, 2):
             moves += self.verify_same_team((row, col+n), allied_pieces)
             for c in range(-1, 2):
-                moves += self.verify_same_team((row + n, col + c), allied_pieces)
+                moves += self.verify_same_team((row + n, col + c),
+                                               allied_pieces)
         if self.can_castle:
             moves += self.castle_right(row, col, allied_pieces, op_pieces)
             moves += self.castle_left(row, col, allied_pieces, op_pieces)
