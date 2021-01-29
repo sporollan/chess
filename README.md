@@ -1,9 +1,10 @@
 # chess
-Python Chess engine
+Python Chess Engine
+
 Features
--Object Oriented design
--Testing
--Piece capture
--Castling
--En Passant
--Check and Checkmate
+ - Object Oriented design
+ - Testing
+ - Capturing Pieces
+ - Castling
+ - En Passant
+ - Check and Checkmate
